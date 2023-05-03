@@ -42,24 +42,28 @@ func (c *Context) Status(code int) {
 	c.Writer.WriteHeader(code)
 }
 
+// SetHeader 方法是 Context 结构的一种便捷方法，它允许您使用指定的键和值为响应设置 HTTP 标头。
 func (c *Context) SetHeader(key string, value string) {
 	c.Writer.Header().Set(key, value)
 }
 
-// TODO: 解读这个函数
+// String 向客户端发送带有给定状态代码的纯文本响应，以及通过将格式字符串应用于提供的值而生成的格式化字符串
+// values 在函数内部是切片的形式
 func (c *Context) String(code int, format string, values ...interface{}) {
 	c.SetHeader("Content-Type", "text/plain")
 	c.Status(code)
 	c.Writer.Write([]byte(fmt.Sprintf(format, values...)))
 }
 
-// TODO: 解读这个函数，为什么有body的方法还需要json
+// JSON 写入状态代码，并对要作为响应主体发送的 JSON 对象进行编码
 func (c *Context) JSON(code int, obj interface{}) {
+	// 这会通知客户端响应将采用 JSON 格式
 	c.SetHeader("Content-Type", "application/json")
 	c.Status(code)
 	encoder := json.NewEncoder(c.Writer)
 	if err := encoder.Encode(obj); err != nil {
-		http.Error(c.Writer, err.Error(), 500)
+		// 500 表服务器内部错误
+		http.Error(c.Writer, err.Error(), http.StatusInternalServerError)
 	}
 }
 
@@ -69,7 +73,7 @@ func (c *Context) Data(code int, data []byte) {
 	c.Writer.Write(data)
 }
 
-// TODO: 解读这个函数
+// HTML 在返回的body中写入html这个网页的信息
 func (c *Context) HTML(code int, html string) {
 	c.SetHeader("Content-Type", "text/html")
 	c.Status(code)
