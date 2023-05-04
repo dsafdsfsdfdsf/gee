@@ -77,7 +77,20 @@ func (r *router) getRoute(method string, path string) (*node, map[string]string)
 
 	n := root.search(searchParts, 0)
 
-	// 这部分比较难懂
+	// 当找到匹配的节点 n 时执行这部分函数。它旨在从路径中提取任何参数或通配符值并将它们添加到参数映射中。让我们通过一个更详细的示例来完成这一部分。
+	// 考虑在路由器中注册的以下路由：
+	// GET /users/:userID/books/:bookID
+	// 我们要为请求找到匹配的路由：GET /users/123/books/456
+	// 方法是“GET”，路径是“/users/123/books/456”。
+	// 调用搜索函数后，匹配节点 n 被找到，模式为“/users/:userID/books/:bookID”。
+	// 匹配节点的模式被解析为部分：["users", ":userID", "books", ":bookID"]。
+	// 现在，我们将遍历这些部分并检查它们是参数还是通配符：
+	// A。第一部分“用户”是静态部分，所以我们什么都不做。
+	// b.第二部分“:userID”以冒号 (':') 开头，表明它是一个参数。我们将此参数添加到参数映射中，键为“userID”，值为 searchParts 中相应位置的值，即“123”。 params 映射变为：{"userID": "123"}。
+	// C。第三部分“书籍”是静态部分，所以我们什么都不做。
+	// d.第四部分":bookID" 以冒号(':') 开头，表明它是一个参数。我们使用键“bookID”和来自 searchParts 中相应位置的值“456”将此参数添加到参数映射中。 params 映射变为：{"userID": "123", "bookID": "456"}。
+	// 提取所有参数后，我们返回匹配的节点 n 和参数映射：{"userID": "123", "bookID": "456"}。
+	// 在这个例子中，没有通配符，所以第二个 if 条件 (if part[0] == '*' && len(part) > 1) 从未被执行。如果模式中有通配符部分，例如 *remainder，它会捕获剩余的路径段并用“/”连接它们，将结果添加到具有键“remainder”的参数映射中。
 	if n != nil {
 		parts := parsePattern(n.pattern)
 		for index, part := range parts {
