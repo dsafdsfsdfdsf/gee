@@ -81,7 +81,22 @@ func (n *node) insert(pattern string, parts []string, height int) {
 	child.insert(pattern, parts, height+1)
 }
 
+// part: ["p", "Go", "doc"] height:  trie 结构的当前深度
 // search looks for a node that matches the given parts and returns it if found.
+// 假设我们有如下的 trie 结构
+// /
+// ├── p
+// │   ├── :lang
+// │   │   └── doc
+// └── api
+//     └── v1
+//         ├── users
+//         └── products
+// 从根节点开始，该函数搜索与第一部分“p”匹配的子节点。
+// 它找到一个匹配的子节点并递归调用搜索函数，下一部分“Go”和递增的高度为 1。
+// 在下一级，它搜索与“Go”部分匹配的子节点。它会找到包含“:lang”部分的匹配子节点，因为“:lang”是一个可以匹配任何值的通配符。
+// 它使用下一部分“doc”和递增的高度 2 递归调用搜索函数。
+// 在下一级，它搜索与“doc”部分匹配的子节点。它找到一个匹配的子节点。
 func (n *node) search(parts []string, height int) *node {
 	// If we reach the end of the parts array or find a wildcard, check for a stored pattern.
 	if len(parts) == height || strings.HasPrefix(n.part, "*") {
@@ -96,7 +111,7 @@ func (n *node) search(parts []string, height int) *node {
 	// Get the current part to process and find all matching child nodes.
 	part := parts[height]
 	children := n.matchChildren(part)
-
+	["p", "Go", "doc"]
 	// Iterate through the matching children and search recursively.
 	for _, child := range children {
 		// If a matching node is found, return it.
