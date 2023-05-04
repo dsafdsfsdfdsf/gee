@@ -30,6 +30,7 @@ func (n *node) matchChild(part string) *node {
 // matchChildren is a method on the node struct that searches for all child nodes
 // that match the given part string. It returns a slice of matching child nodes.
 // e.g.
+// this is
 func (n *node) matchChildren(part string) []*node {
 	// Create an empty slice to store matching child nodes.
 	nodes := make([]*node, 0)
@@ -47,8 +48,18 @@ func (n *node) matchChildren(part string) []*node {
 	return nodes
 }
 
+// pattern: "/p/:lang/doc" parts: ["p", ":lang", "doc"] height:  trie 结构的当前深度
 // insert adds a new route pattern to the node and its children recursively.
-// e.g.
+// 我们插入 "/p/:lang/doc" (parts = ["p", ":lang", "doc"]):
+// “p”部分已经作为根节点的子节点存在，因此我们不创建新节点。
+// 我们移动到下一个高度并将“:lang”部分作为“p”的子节点插入。
+// 然后我们再次移动到下一个高度，将“doc”部分作为“:lang”的子节点插入。
+// 最终的 trie 结构如下所示：
+//   - (root)
+//     |- p
+//     |- doc
+//     |- :lang
+//     |- doc
 func (n *node) insert(pattern string, parts []string, height int) {
 	// If we reach the end of the parts array, store the pattern and return.
 	if len(parts) == height {
