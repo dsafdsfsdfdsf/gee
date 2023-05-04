@@ -96,7 +96,7 @@ func (n *node) insert(pattern string, parts []string, height int) {
 
 // part: ["p", "Go", "doc"] height:  trie 结构的当前深度
 // search looks for a node that matches the given parts and returns it if found.
-// 假设我们有如下的 trie 结构
+// 假设我们有如下的 trie 结构, 搜索 /p/go/doc
 // /
 // ├── p
 // │   ├── :lang
