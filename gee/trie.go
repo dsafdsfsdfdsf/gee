@@ -13,7 +13,22 @@ type node struct {
 
 // matchChild is a method on the node struct that searches for a child node that matches
 // the given part string. If a matching child node is found, it returns the node; otherwise, it returns nil.
-// e.g.
+// 如果找到匹配的子节点或通配符子节点（例如，“:”或“*”），则返回该子节点；否则，它返回零
+// 假设我们想从根节点的子节点中为“api”部分找到一个匹配的子节点：
+// 使用根节点和部分“api”调用 matchChild 函数。
+// 该函数遍历根节点的子节点。
+// 它检查每个子节点的部分是否与给定部分“api”匹配，或者子节点是否为通配符（例如，“:”或“*”）。
+// 当它遇到“api”子节点时，它会找到匹配项并返回该子节点。
+// 返回的节点是带有“api”部分的节点。如果没有匹配的子节点或通配符节点，该函数将返回 nil。
+// /
+// ├── p
+// │   ├── :lang
+// │   │   └── doc
+// └── api
+//
+//	└── v1
+//	    ├── users
+//	    └── products
 func (n *node) matchChild(part string) *node {
 	// Iterate through the children of the current node.
 	for _, child := range n.children {
@@ -29,8 +44,6 @@ func (n *node) matchChild(part string) *node {
 
 // matchChildren is a method on the node struct that searches for all child nodes
 // that match the given part string. It returns a slice of matching child nodes.
-// e.g.
-// this is
 func (n *node) matchChildren(part string) []*node {
 	// Create an empty slice to store matching child nodes.
 	nodes := make([]*node, 0)
@@ -89,9 +102,11 @@ func (n *node) insert(pattern string, parts []string, height int) {
 // │   ├── :lang
 // │   │   └── doc
 // └── api
-//     └── v1
-//         ├── users
-//         └── products
+//
+//	└── v1
+//	    ├── users
+//	    └── products
+//
 // 从根节点开始，该函数搜索与第一部分“p”匹配的子节点。
 // 它找到一个匹配的子节点并递归调用搜索函数，下一部分“Go”和递增的高度为 1。
 // 在下一级，它搜索与“Go”部分匹配的子节点。它会找到包含“:lang”部分的匹配子节点，因为“:lang”是一个可以匹配任何值的通配符。
@@ -111,10 +126,10 @@ func (n *node) search(parts []string, height int) *node {
 	// Get the current part to process and find all matching child nodes.
 	part := parts[height]
 	children := n.matchChildren(part)
-	["p", "Go", "doc"]
 	// Iterate through the matching children and search recursively.
 	for _, child := range children {
 		// If a matching node is found, return it.
+		// 递归调用search
 		result := child.search(parts, height+1)
 		if result != nil {
 			return result
