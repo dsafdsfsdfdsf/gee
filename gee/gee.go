@@ -13,11 +13,12 @@ type HandlerFunc func(*Context)
 // Engine implement the interface of ServeHTTP
 
 type Engine struct {
-	*RouterGroup
-	router *router
-	groups []*RouterGroup // store all groups
+	*RouterGroup // 这是一个内嵌字段，表示Engine结构体继承了RouterGroup的方法。这允许引擎拥有自己的一组路由
+	router       *router
+	groups       []*RouterGroup // store all groups
 }
 
+// this is a new
 type RouterGroup struct {
 	prefix      string
 	middlewares []HandlerFunc // support middleware
