@@ -15,8 +15,14 @@ type Context struct {
 	// request info
 	Path   string
 	Method string
+	Params map[string]string // 将解析后的参数存储到Params中
 	// response info
 	StatusCode int
+}
+
+func (c *Context) Param(key string) string {
+	value, _ := c.Params[key]
+	return value
 }
 
 // newContext
