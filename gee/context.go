@@ -15,7 +15,7 @@ type Context struct {
 	// request info
 	Path   string
 	Method string
-	Params map[string]string // 将解析后的参数存储到Params中
+	Params map[string]string // 将解析后的参数存储到Params中, 比如 Params["id"] = 123
 	// response info
 	StatusCode int
 }
